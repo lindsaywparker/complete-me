@@ -28,7 +28,11 @@ export default class Trie {
   }
   
   suggest(input) {
-    // TODO: some error statement if it's not in the trie
+    // PSEUDOCODE THIS....
+    // Something like iterate through currentNode && index of split input?
+    // Recursively call *separate* function (more easily tested) to build suggestions
+    
+    
     
     let currentNode = this.root;
     let tempStr = '';
@@ -43,5 +47,7 @@ export default class Trie {
     suggestionsArr.push(tempStr);
     
     return suggestionsArr;
+    
+    // TODO: some error statement if it's not in the trie
   }
 }

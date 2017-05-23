@@ -78,6 +78,8 @@ describe('Trie', () => {
     trie.insert('suh');
     expect(trie.suggest('piz')).to.deep.equal(['pizza']);
     expect(trie.suggest('s')).to.deep.equal(['suh']);
+    
+    // TODO: test if there are no suggestions
   });
   
 });
