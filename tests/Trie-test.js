@@ -71,7 +71,36 @@ describe('Trie', () => {
     
     trie.insert('pizza');
     expect(trie.count()).to.equal(10);
+    
+    trie.insert('pi');
+    expect(trie.count()).to.equal(11);
   });    
+  
+  // BUG: Test that 'pizza' is word, then insert 'pi' and it's a word
+  
+  it('should recurse once', () => {
+    trie.insert('pizza');
+    let output = trie.recurse('pizz', trie.root.children.p.children.i.children.z.children.z);
+    expect(output).to.deep.equal(['pizza']);
+  });
+  
+  it('should recurse twice', () => {
+    trie.insert('pizza');
+    let output = trie.recurse('piz', trie.root.children.p.children.i.children.z);
+    expect(output).to.deep.equal(['pizza']);
+  });
+  
+  it('should recurse thrice', () => {
+    trie.insert('pizza');
+    let output = trie.recurse('pi', trie.root.children.p.children.i);
+    expect(output).to.deep.equal(['pizza']);
+  });
+
+  it('should recurse four times', () => {
+    trie.insert('pizza');
+    let output = trie.recurse('p', trie.root.children.p);
+    expect(output).to.deep.equal(['pizza']);
+  });
   
   it('should return an array of suggested words based on input string', () => {
     trie.insert('pizza');
@@ -79,7 +108,7 @@ describe('Trie', () => {
     expect(trie.suggest('piz')).to.deep.equal(['pizza']);
     expect(trie.suggest('s')).to.deep.equal(['suh']);
     
-    // TODO: test if there are no suggestions
+    // BUG: test if there are no suggestions
   });
   
 });

@@ -29,25 +29,47 @@ export default class Trie {
   
   suggest(input) {
     // PSEUDOCODE THIS....
-    // Something like iterate through currentNode && index of split input?
     // Recursively call *separate* function (more easily tested) to build suggestions
     
-    
+    // 1) get to node of last char of input
+    // 2) recurse all branches
+    // 3) push to array if isWord
+    // 4) return array
     
     let currentNode = this.root;
     let tempStr = '';
-    const suggestionsArr = [];
     
-    while (!currentNode.isWord) {
-      console.log(currentNode);
-      // tempStr += ???;
-      currentNode = currentNode.children;      
+    [...input.toLowerCase()].forEach( letter => {
+      tempStr += letter;      
+      currentNode = currentNode.children[letter];      
+    });
+    
+    return this.recurse(tempStr, currentNode);
+    
+    // BUG: some error statement if it's not in the trie
+  }
+  
+  recurse(str, currentNode) {    
+    let tempStr = str;
+    let suggestionsArr;
+    
+    if (!suggestionsArr) {
+      suggestionsArr = [];
     }
     
-    suggestionsArr.push(tempStr);
+    if (Object.keys(currentNode.children).length === 0 ) {
+      suggestionsArr.push(tempStr);
+      return suggestionsArr;
+    }
     
-    return suggestionsArr;
+    let kids = Object.keys(currentNode.children);
     
-    // TODO: some error statement if it's not in the trie
+    kids.forEach( child => {
+      tempStr += currentNode.children[child].letter;
+      tempStr = this.recurse(tempStr, currentNode.children[child]);
+    });
+    
+    return tempStr;
   }
+  
 }
