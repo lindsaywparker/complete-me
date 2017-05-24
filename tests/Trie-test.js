@@ -1,7 +1,12 @@
 import { expect } from 'chai';
 import Trie from '../scripts/Trie.js';
 import Node from '../scripts/Node.js';
+import fs from 'fs'
 require ('locus');
+// const dictionary = '/usr/share/dict/words';
+
+
+
 
 describe('Trie', () => {
   let trie;
@@ -45,7 +50,8 @@ describe('Trie', () => {
     expect(trie.root.children.h.letter).to.equal('h');
     expect(trie.root.children.h.children.e.letter).to.equal('e');
     expect(trie.root.children.h.children.i.letter).to.equal('i');
-    expect(trie.root.children.h.children.i.children.l.children.l.isWord).to.equal(true);
+    expect(trie.root.children.h.children.i.children.l.children.l.isWord).
+      to.equal(true);
     expect(trie.root.children.h.children.i.isWord).to.equal(false);
   });
   
@@ -79,49 +85,46 @@ describe('Trie', () => {
   
   // BUG: Test that 'pizza' is word, then insert 'pi' and it's a word
   
-  it.skip('should recurse once', () => {
+  it('should recurse', () => {
     trie.insert('pizza');
-    let output = trie.recurse('pizz', trie.root.children.p.children.i.children.z.children.z);
-    expect(output).to.deep.equal(['pizza']);
-  });
-  
-  it.skip('should recurse twice', () => {
-    trie.insert('pizza');
-    let output = trie.recurse('piz', trie.root.children.p.children.i.children.z);
-    expect(output).to.deep.equal(['pizza']);
-  });
-  
-  it.skip('should recurse thrice', () => {
-    trie.insert('pizza');
-    let output = trie.recurse('pi', trie.root.children.p.children.i);
-    expect(output).to.deep.equal(['pizza']);
-  });
-
-  it.skip('should recurse four times', () => {
-    trie.insert('pizza');
-    let output = trie.recurse('p', trie.root.children.p);
-    expect(output).to.deep.equal(['pizza']);
-  });
-  
-  it.only('should return an array of suggested words based on input string', () => {
-    trie.insert('pizza');
-    trie.insert('pie');
-    trie.insert('plaza');
-    trie.insert('suh');
-    expect(trie.suggest('piz')).to.deep.equal(['pizza']);
-    expect(trie.suggest('pi')).to.deep.equal(['pizza', 'pie']);
-    expect(trie.suggest('p')).to.deep.equal(['pizza', 'pie', 'plaza']);
-    expect(trie.suggest('s')).to.deep.equal(['suh']);
+    let output = trie.recurse('p', trie.root.children.p, []);
     
+    expect(output).to.deep.equal(['pizza']);
   });
   
-  it('should return suggested words when not a leaf', () => {
+  it('should return an array of suggested words based on input string', () => {
     trie.insert('pizza');
     trie.insert('pizzas');
-    // eval(locus);
+    trie.insert('plaza');
+    trie.insert('suh');
+    trie.insert('a');
+    trie.insert('and');
+    
     expect(trie.suggest('piz')).to.deep.equal(['pizza', 'pizzas']);
+    expect(trie.suggest('p')).to.deep.equal(['pizza', 'pizzas', 'plaza']);
+    expect(trie.suggest('s')).to.deep.equal(['suh']);
+    expect(trie.suggest('a')).to.deep.equal(['a', 'and']);
+    
   });
-  
+
   // BUG: test if there are no suggestions
+  
+  it.skip('should populate the built-in dictionary', () => {
+    const text = '/usr/share/dict/words';
+    let dictionary = fs.readFileSync(text).toString().toLowerCase().trim().
+      split('\n');
+    
+    // reduce on dictionary to count each instance {word: count}
+    // duplicates = object.keys().filter where count > 1
+    
+    // let uniqueCount = dictionary.length - duplicates.length;
+    
+    let uniqueCount = 235886 - 1515;
+    
+    expect(trie.count()).to.equal(0);
+    trie.populate(dictionary);
+    expect(trie.count()).to.equal(uniqueCount);
+  });
+
   
 });

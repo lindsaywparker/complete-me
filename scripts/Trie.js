@@ -28,51 +28,42 @@ export default class Trie {
   }
   
   suggest(input) {
-    // PSEUDOCODE THIS....
-    // Recursively call *separate* function (more easily tested) to build suggestions
-    
-    // 1) get to node of last char of input
-    // 2) recurse all branches
-    // 3) push to array if isWord
-    // 4) return array
-    
     let currentNode = this.root;
-    let tempStr = '';
+    let inputStr = '';
+    let suggestionsArr = [];
     
     [...input.toLowerCase()].forEach( letter => {
-      tempStr += letter;      
+      inputStr += letter;      
       currentNode = currentNode.children[letter];      
     });
     
-    return this.recurse(tempStr, currentNode);
+    if (currentNode.isWord) {
+      suggestionsArr.push(inputStr);
+    }
     
-    // BUG: some error statement if it's not in the trie
+    return this.recurse(inputStr, currentNode, suggestionsArr);
   }
   
-  recurse(str, currentNode) {    
-    let tempStr = str;
-    let suggestionsArr;
+  recurse(str, currentNode, suggestionsArr) {
+    
+    let kids = Object.keys(currentNode.children);
+    
+    kids.forEach( child => {
+      let word = str + currentNode.children[child].letter; 
 
-    if (!suggestionsArr) {
-      suggestionsArr = [];
-    } else {
-      suggestionsArr = suggestionsArr;
-    }
-      
-    if (Object.keys(currentNode.children).length === 0 ) {
-      suggestionsArr.push(tempStr);
-      return suggestionsArr;
-    } else {
-      
-      let kids = Object.keys(currentNode.children);
-      
-      kids.forEach( child => {
-        tempStr += currentNode.children[child].letter;
-        tempStr = this.recurse(tempStr, currentNode.children[child]);
-      });
-      
-      return tempStr;
-    }
+      if (currentNode.children[child].isWord) {
+        suggestionsArr.push(word);
+      }
+      word = this.recurse(word, currentNode.children[child], suggestionsArr);
+    });
+    
+    return suggestionsArr;
+    
   }
   
+  populate(dictionary) {
+    dictionary.forEach(word => {
+      this.insert(word);
+    });
+  }
 }
