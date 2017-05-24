@@ -52,24 +52,27 @@ export default class Trie {
   recurse(str, currentNode) {    
     let tempStr = str;
     let suggestionsArr;
-    
+
     if (!suggestionsArr) {
       suggestionsArr = [];
+    } else {
+      suggestionsArr = suggestionsArr;
     }
-    
+      
     if (Object.keys(currentNode.children).length === 0 ) {
       suggestionsArr.push(tempStr);
       return suggestionsArr;
+    } else {
+      
+      let kids = Object.keys(currentNode.children);
+      
+      kids.forEach( child => {
+        tempStr += currentNode.children[child].letter;
+        tempStr = this.recurse(tempStr, currentNode.children[child]);
+      });
+      
+      return tempStr;
     }
-    
-    let kids = Object.keys(currentNode.children);
-    
-    kids.forEach( child => {
-      tempStr += currentNode.children[child].letter;
-      tempStr = this.recurse(tempStr, currentNode.children[child]);
-    });
-    
-    return tempStr;
   }
   
 }

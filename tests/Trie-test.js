@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import Trie from '../scripts/Trie.js';
 import Node from '../scripts/Node.js';
+require ('locus');
 
 describe('Trie', () => {
   let trie;
@@ -78,37 +79,49 @@ describe('Trie', () => {
   
   // BUG: Test that 'pizza' is word, then insert 'pi' and it's a word
   
-  it('should recurse once', () => {
+  it.skip('should recurse once', () => {
     trie.insert('pizza');
     let output = trie.recurse('pizz', trie.root.children.p.children.i.children.z.children.z);
     expect(output).to.deep.equal(['pizza']);
   });
   
-  it('should recurse twice', () => {
+  it.skip('should recurse twice', () => {
     trie.insert('pizza');
     let output = trie.recurse('piz', trie.root.children.p.children.i.children.z);
     expect(output).to.deep.equal(['pizza']);
   });
   
-  it('should recurse thrice', () => {
+  it.skip('should recurse thrice', () => {
     trie.insert('pizza');
     let output = trie.recurse('pi', trie.root.children.p.children.i);
     expect(output).to.deep.equal(['pizza']);
   });
 
-  it('should recurse four times', () => {
+  it.skip('should recurse four times', () => {
     trie.insert('pizza');
     let output = trie.recurse('p', trie.root.children.p);
     expect(output).to.deep.equal(['pizza']);
   });
   
-  it('should return an array of suggested words based on input string', () => {
+  it.only('should return an array of suggested words based on input string', () => {
     trie.insert('pizza');
+    trie.insert('pie');
+    trie.insert('plaza');
     trie.insert('suh');
     expect(trie.suggest('piz')).to.deep.equal(['pizza']);
+    expect(trie.suggest('pi')).to.deep.equal(['pizza', 'pie']);
+    expect(trie.suggest('p')).to.deep.equal(['pizza', 'pie', 'plaza']);
     expect(trie.suggest('s')).to.deep.equal(['suh']);
     
-    // BUG: test if there are no suggestions
   });
+  
+  it('should return suggested words when not a leaf', () => {
+    trie.insert('pizza');
+    trie.insert('pizzas');
+    // eval(locus);
+    expect(trie.suggest('piz')).to.deep.equal(['pizza', 'pizzas']);
+  });
+  
+  // BUG: test if there are no suggestions
   
 });
