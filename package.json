@@ -1,8 +1,8 @@
 {
-  "name": "TDD",
+  "name": "complete-me",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "Trie.js",
   "directories": {
     "test": "tests"
   },
