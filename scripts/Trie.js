@@ -23,47 +23,79 @@ export default class Trie {
     }
   }
   
-  count() {
-    return this.wordCount;
+  populate(dictionary) {
+    dictionary.forEach(word => {
+      this.insert(word);
+    });
   }
   
-  suggest(input) {
+  find(str) {
     let currentNode = this.root;
-    let inputStr = '';
-    let suggestionsArr = [];
     
-    [...input.toLowerCase()].forEach( letter => {
-      inputStr += letter;      
+    [...str.toLowerCase()].forEach( letter => {
       currentNode = currentNode.children[letter];      
     });
     
-    if (currentNode.isWord) {
-      suggestionsArr.push(inputStr);
+    return currentNode;
+  }
+  
+  suggest(input) {
+    let suggestionsArr = [];
+    
+    if (typeof input !== 'string' || input === '') {
+      return 'Input a string';
     }
     
-    return this.recurse(inputStr, currentNode, suggestionsArr);
+    let currentNode = this.find(input);
+    
+    if (!currentNode) {
+      return 'No suggestions available';
+    }
+    
+    if (currentNode.isWord) {
+      suggestionsArr.push([input, currentNode.preference]);
+    }
+    
+    let output = this.recurse(input, currentNode, suggestionsArr);
+    let finalOutput = this.prepareOutput(output);
+    
+    return finalOutput;
   }
   
   recurse(str, currentNode, suggestionsArr) {
-    
     let kids = Object.keys(currentNode.children);
     
     kids.forEach( child => {
       let word = str + currentNode.children[child].letter; 
 
       if (currentNode.children[child].isWord) {
-        suggestionsArr.push(word);
+        suggestionsArr.push([word, currentNode.children[child].preference]);
       }
+      
       word = this.recurse(word, currentNode.children[child], suggestionsArr);
     });
     
     return suggestionsArr;
-    
   }
   
-  populate(dictionary) {
-    dictionary.forEach(word => {
-      this.insert(word);
-    });
+  select(wordPreference) {
+    let currentNode = this.find(wordPreference);
+    
+    currentNode.preference++;
+  }
+
+  count() {
+    return this.wordCount;
+  }
+  
+  prepareOutput(array) {
+    return array.sort( (a, b) => {
+      return b[1] - a[1];
+    })
+    .reduce( (acc, wordArr) => {
+      acc.push(wordArr[0]);
+      return acc;
+    }, [])
+    .slice(0, 15);
   }
 }
